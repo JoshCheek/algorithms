@@ -24,6 +24,24 @@ int * mergesort(int *arr){
   return sorted;
 }
 
+int * merge(int *arr_one, int *arr_two){
+  int arr_one_len = sizeof(arr_one) / sizeof(int)
+  int arr_two_len = sizeof(arr_two) / sizeof(int)
+  int i, j = 0;
+  int sorted[arr_one_len + arr_two_len];
+  while (i < arr_one_len && j < arr_two_len) {
+    if (arr_one[i] < arr_two[j]) {
+      *sorted = arr_one[i]
+        i += 1;
+    } else {
+      *sorted = arr_two[j]
+        j += 1;
+    }
+    sorted += 1;
+  }
+
+}
+
 int main(int argc, char** argv){
   int nums[4];
   for (int i = 0; i < 4; i++){
