@@ -1,6 +1,13 @@
 
 class InversionCounter
 
+  # This is basically merge sort, except we leverage the
+  # fact that whenever we reach into the second array, A1, we
+  # can count the number of elements in the first array, A0, as inversions
+  # since, by definition, for every element i...k in A0, if there
+  # exists an element j in A1 such that j < i, then the number of
+  # inversions should be increased by the order of (i, i + 1, ..., k)
+
   def sort_and_count(arr, inversion_count = 0)
     if arr.count <= 1
       [inversion_count, arr]
