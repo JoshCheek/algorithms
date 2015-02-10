@@ -12,11 +12,33 @@ class MinCut
     2
   end
 
+  def contract(node_one, node_two)
+    graph[node_one].concat(connections_to(node_two))
+    # delete self loops
+    # squash old loops
+    graph.delete(node_two)
+  end
+
+  def edges
+    graph.reduce([]) do |edges, (node, connections)|
+      connections.each do |conn|
+      edges << [node, conn]
+    end
+    edges
+    end
+  end
+
   def connections_to(node)
     @graph[node]
   end
 
   private
+
+  def self_loop?(arr, node_one, node_two)
+    node_one == node_two ||
+    (arr[0] == node_one && arr[1] == node_two) ||
+    (arr[1] == node_two && arr[0] == node_one)
+  end
 
   def build_graph(input)
     input.reduce({}) do |acc, line|
