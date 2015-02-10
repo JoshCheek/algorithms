@@ -1,3 +1,5 @@
+require File.expand_path(".", "util")
+
 class Quicksort
 
   attr_reader :pivot_method
@@ -91,12 +93,9 @@ class Quicksort
   end
 end
 
-if __FILE__ == $0
-  file_path = ARGV[0]
-  File.open(file_path) do |f|
-    entries = f.to_a.map! {|entry| entry.gsub(/\r\n/,"").to_i }
-    sorted, comparisons = Quicksort.new(ARGV[1].to_sym).sort(entries)
-    puts "Num comparisons: #{comparisons}"
-    puts "Sorted: #{sorted}"
-  end
+Util.with_file_arg(__FILE__) do |f|
+  entries = f.to_a.map! {|entry| entry.gsub(/\r\n/,"").to_i }
+  sorted, comparisons = Quicksort.new(ARGV[1].to_sym).sort(entries)
+  puts "Num comparisons: #{comparisons}"
+  puts "Sorted: #{sorted}"
 end
