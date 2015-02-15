@@ -25,38 +25,49 @@ describe MinCut do
                [3, 1, 2]]
       mc = MinCut.new(input)
       mc.contract(1, 2)
-      expect(mc.edges).to eq([[1, 3]])
+      expect(mc.edges).to eq([[1, 3], [1, 3]])
 
       input = [[1, 2, 3],
                [2, 1, 3],
                [3, 1, 2]]
       mc = MinCut.new(input)
       mc.contract(1, 3)
-      expect(mc.edges).to eq([[1, 2]])
+      expect(mc.edges).to eq([[1, 2], [1, 2]])
 
       input = [[1, 2, 3],
                [2, 1, 3],
                [3, 1, 2]]
       mc = MinCut.new(input)
       mc.contract(3, 1)
-      expect(mc.edges).to eq([[2, 3]])
+      expect(mc.edges).to eq([[2, 3], [2, 3]])
     end
   end
 
   describe "#min_cut" do
-    it "computes a minimum cut" do
+    it "computes a minimum cut with 3 nodes" do
+      input = [[1, 2, 3],
+               [2, 1, 3],
+               [3, 1, 2]]
+      mc = MinCut.new(input)
+      expect(mc.min_cut).to eq 2
+    end
+
+    it "computes a minimum cut with 4 nodes" do
       #
       # (1) ----- (2)
       #  |         |
       # (3) ----- (4)
       #
       #
+      min_cut = 10000
+      50.times do
       input = [[1, 2, 3],
                [2, 1, 4],
                [3, 1, 4],
-               [4, 2, 3]]
-      edges_with_1 = MinCut.new(input).edges.select {|edge| edge.include?(1)}
-      expect(edges_with_1).to eq([[1, 2], [1, 3]])
+               [4, 1, 2, 3]]
+        min_cut = [MinCut.new(input).min_cut, min_cut].min
+      end
+      expect(min_cut).to eq 2
     end
   end
 end

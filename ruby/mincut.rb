@@ -8,27 +8,19 @@ class MinCut
     @graph = Graph.new(input)
   end
 
-  def min_cut_edge
+  def min_cut
     while graph.remaining_vertices.count > 2
       graph.contract_random_edge
     end
-    graph.edges.first
+    graph.edges.count
   end
 
   def edges
     graph.edges
   end
 
-  def min_cut
-    2
-  end
-
   def contract(node_one, node_two)
     graph.contract([node_one, node_two])
-  end
-
-  def connections_to(node)
-    @graph[node]
   end
 
   class Graph
@@ -40,23 +32,23 @@ class MinCut
       @edges = build_edges(input)
     end
 
+    def remaining_vertices
+      @edges.flatten.uniq
+    end
+
     def contract_random_edge
-      edge = edges.sample
+      edge = @edges.sample
       contract(edge)
-      #new_ref, old_ref = edge
-      #move_ref(new_ref, old_ref)
-      #remove_self_ref_loops(new_ref, old_ref)
     end
 
     def contract(edge)
       new_ref, old_ref = edge
       @edges = move_ref(new_ref, old_ref)
       remove_self_ref_loops(new_ref, old_ref)
-      remove_duplicate_edges
     end
 
     def [](node)
-      edges.select {|edge| edge.include?(node) }
+      @edges.select {|edge| edge.include?(node) }
     end
 
     private
@@ -84,10 +76,6 @@ class MinCut
       end
     end
 
-    def remove_duplicate_edges
-      @edges.uniq! {|item| item.sort}
-    end
-
     def build_edges(input)
       input.reduce([]) do |edges, node_and_connections|
         node = node_and_connections.shift
@@ -107,7 +95,7 @@ Util.with_file_arg(__FILE__) do |f|
     line.gsub!("\r\n","")
     acc << line.split("\t")
   end
-  smallest_cut = 10000000000
+  smallest_cut = 10000000000000
   1000.times do
     smallest_cut = [smallest_cut, MinCut.new(processed_input).min_cut].min
   end
