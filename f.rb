@@ -83,6 +83,29 @@ RSpec.describe 'min_cuts_from_adjacency_list' do
                             .map { |line| line.strip.split(/\s+/).map(&:to_i) }
   end
 
+  # The ones below pass, this one fails.
+  # It's b/c we see abd, abe, so when we get to acb, there is no path to either d or e.
+  # To fix this, the algorithm will need to not short-circuit like it does,
+  # instead it will need to record all paths to each node, and then, at the end,
+  # find the largest subset of paths with no edges in common.
+  # That is its actual count.
+  #
+  # But I have more important things to do, so just going to leave this here.
+  it 'finds 2 for 2 triangles with 1 node in common', t:true do
+    assert_min_cuts 2, from_drawing(<<-TO_PARSE)
+      a --- b --- d
+       \   / \   /
+         c     e
+
+      a b c
+      b a c d e
+      c a b
+      d b e
+      e b d
+    TO_PARSE
+  end
+
+
   it 'works with any node name, integers or symbols or whatever' do
     assert_min_cuts 2, [[1, 2, 3],
                         [2, 1, 4],
@@ -178,21 +201,6 @@ RSpec.describe 'min_cuts_from_adjacency_list' do
       c a d
       d a b c e
       e d
-    TO_PARSE
-  end
-
-  # fuuuuuuuuuck >.<
-  it 'finds 2 for 2 triangles with 1 node in common', t:true do
-    assert_min_cuts 2, from_drawing(<<-TO_PARSE)
-      a --- b --- d
-       \   / \   /
-         c     e
-
-      a b c
-      b a c d e
-      c a b
-      d b e
-      e b d
     TO_PARSE
   end
 
