@@ -44,6 +44,7 @@ class MinCut
     end
 
     def contract(edge)
+      #TODO: Figure out how to write a failing test case for line 48
       @edges.delete(edge)
       new_ref, old_ref = edge
       @edges = move_ref(new_ref, old_ref)
