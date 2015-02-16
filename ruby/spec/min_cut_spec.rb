@@ -1,6 +1,24 @@
 require_relative "../mincut"
 
 describe MinCut do
+
+  context MinCut::Graph do
+    describe "#contract" do
+      xit "removes the given edge" do
+        input = [[1, 2, 3],
+                 [2, 1, 3],
+                 [3, 1, 2]]
+        # 1 -- 2
+        #   \  |
+        #    \ |
+        #      3
+        # [[1, 2], [1, 3], [2, 3]]]
+        g = MinCut::Graph.new(input)
+        g.contract([1, 2])
+      end
+    end
+  end
+
   describe ".new" do
     it "parses the first element as a node connected to all others" do
       input = [[1, 37, 79]]
@@ -39,7 +57,7 @@ describe MinCut do
                [3, 1, 2]]
       mc = MinCut.new(input)
       mc.contract(3, 1)
-      expect(mc.edges).to eq([[2, 3], [2, 3]])
+      expect(mc.edges).to eq([[1, 2], [1, 2]])
     end
   end
 
@@ -60,11 +78,11 @@ describe MinCut do
       #
       #
       min_cut = 10000
-      50.times do
-      input = [[1, 2, 3],
-               [2, 1, 4],
-               [3, 1, 4],
-               [4, 1, 2, 3]]
+      1000.times do
+        input = [[1, 2, 3],
+                 [2, 1, 4],
+                 [3, 1, 4],
+                 [4, 1, 2, 3]]
         min_cut = [MinCut.new(input).min_cut, min_cut].min
       end
       expect(min_cut).to eq 2

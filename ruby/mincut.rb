@@ -1,4 +1,6 @@
 require File.expand_path(".", "util")
+require 'benchmark'
+require 'thread'
 
 class MinCut
 
@@ -20,7 +22,7 @@ class MinCut
   end
 
   def contract(node_one, node_two)
-    graph.contract([node_one, node_two])
+    graph.contract([node_one, node_two].sort)
   end
 
   class Graph
@@ -42,6 +44,8 @@ class MinCut
     end
 
     def contract(edge)
+      #TODO: Figure out how to write a failing test case for line 48
+      @edges.delete(edge)
       new_ref, old_ref = edge
       @edges = move_ref(new_ref, old_ref)
       remove_self_ref_loops(new_ref, old_ref)
@@ -70,7 +74,7 @@ class MinCut
 
     def remove_self_ref_loops(node_one, node_two)
       @edges.each_with_index do |edge, idx|
-        if edge.sort == [node_one, node_two].sort || edge.uniq.count == 1
+        if edge.uniq.count == 1
           @edges.delete_at(idx)
         end
       end
@@ -81,7 +85,7 @@ class MinCut
         node = node_and_connections.shift
         node_and_connections.collect do |conn|
           edge = [node, conn].sort
-          edges << edge unless edges.include?(edge.sort)
+          edges << edge unless edges.include?(edge)
         end
         edges
       end
@@ -93,13 +97,23 @@ end
 Util.with_file_arg(__FILE__) do |f|
   processed_input = f.reduce([]) do |acc, line|
     line.gsub!("\r\n","")
-    acc << line.split("\t")
+    split = line.split("\t")
+    split.map!{|x| x.to_i}
+    acc << split
   end
   smallest_cut = 10000000000000
-  1000.times do
-    smallest_cut = [smallest_cut, MinCut.new(processed_input).min_cut].min
+  smallest_cut_list = Queue.new
+  duped = Marshal.dump(processed_input)
+  threads = []
+  ARGV[1].to_i.times do
+    threads << Thread.new { smallest_cut_list << MinCut.new(Marshal.load(duped)).min_cut }
   end
-  puts "Smallest cut found after 1000 tries: #{smallest_cut}"
+  threads.each {|t| t.join}
+  l = []
+  while !smallest_cut_list.empty?
+    l << smallest_cut_list.pop
+  end
+  puts "Smallest cut found after #{ARGV[1].to_i} tries: #{l.min.inspect}"
 end
 
 
